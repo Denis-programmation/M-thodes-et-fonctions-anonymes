@@ -1,50 +1,96 @@
-struct Rectangle 
+#[derive(Debug, PartialEq, Copy, Clone)]
+enum ShirtColor 
 {
-    largeur: u32,
-    hauteur: u32
+    Red,
+    Blue,
 }
 
-impl Rectangle 
+struct Inventory 
 {
-    // construit une nouvelle instance à partir des valeurs fournies.
-    fn new(largeur: u32, hauteur: u32) -> Self 
+    shirts: Vec<ShirtColor>,
+}
+
+impl Inventory 
+{
+    fn giveaway(&self, user_preference: Option<ShirtColor>) -> ShirtColor 
     {
-        Self { largeur, hauteur }
+        user_preference.unwrap_or_else( || self.most_stocked() )
     }
 
-    // Remplace les valeurs de l'instance existante.
-    fn modif(&mut self, largeur: u32, hauteur: u32) 
+    fn most_stocked(&self) -> ShirtColor 
     {
-        self.largeur = largeur;
-        self.hauteur = hauteur;
-    }
+        let mut num_red = 0;
+        let mut num_blue = 0;
 
-    // calcul de la surface
-    fn aire(&self) -> u32 
-    {
-        self.largeur * self.hauteur
-    }
-
-    fn perimetre(&self) -> u32
-    {
-        (self.largeur + self.hauteur) * 2
-    }
-
-    // Affiche les valeurs.
-    fn describe(&self) 
-    {
-        println!("Le rectangle défini a une largeur de {} et une hauteur de {}", self.largeur, self.hauteur);
+        for color in &self.shirts 
+        {
+            match color {
+                ShirtColor::Red => num_red += 1,
+                ShirtColor::Blue => num_blue += 1,
+            }
+        }
+        if num_red > num_blue 
+        {
+            ShirtColor::Red
+        } else 
+        {
+            ShirtColor::Blue
+        }
     }
 }
+
+use std::thread;
 
 fn main() 
 {
-    let mut rect1 = Rectangle::new( 30, 50 );
-    rect1.describe();
-    println!( "La surface de ce rectangle est {}", rect1.aire() );
-    println!( "Le périmètre de ce rectangle est {}", rect1.perimetre() );
-    rect1.modif( 300, 500 );
-    rect1.describe();
-    println!( "La surface de ce rectangle est {}", rect1.aire() );
-    println!( "Le périmètre de ce rectangle est {}", rect1.perimetre() )
+    if false
+    {
+        let store = Inventory 
+        {
+            shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
+        };
+
+        let user_pref1 = Some(ShirtColor::Red);
+        let giveaway1 = store.giveaway(user_pref1);
+        println!( "The user with preference {:?} gets {:?}", user_pref1, giveaway1 );
+
+        let user_pref2 = None;
+        let giveaway2 = store.giveaway(user_pref2);
+        println!( "The user with preference {:?} gets {:?}", user_pref2, giveaway2 );
+    }
+
+    if false
+    {
+        let list = vec![1, 2, 3];
+        println!("Before defining closure: {list:?}");
+
+        let only_borrows = |x| println!("From closure: {list:?}, {x}");
+
+        println!("Before calling closure: {list:?}");
+        only_borrows(5);
+        println!("After calling closure: {list:?}");
+    }
+
+    if false
+    {
+        let mut list = vec![1, 2, 3];
+        println!("Before defining closure: {list:?}");
+
+        let mut borrows_mutably = || list.push(7);
+
+        borrows_mutably();
+        println!("After calling closure: {list:?}");
+    }
+
+    if false
+    {   let list = vec![1, 2, 3];
+        println!("Before defining closure: {list:?}");
+        let l = list.clone();
+
+        thread::spawn(move || println!("From thread: {list:?}"))
+        .join()
+        .unwrap();
+
+        println!("{l:?}")
+    }
 }
