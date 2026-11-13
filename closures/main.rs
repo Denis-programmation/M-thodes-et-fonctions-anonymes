@@ -39,10 +39,26 @@ impl Inventory
     }
 }
 
+fn z ( x: i32, y: i32 ) -> i32
+{
+    x + y
+}
+
 use std::thread;
 
 fn main() 
 {
+    if true
+    {
+        let x = 1;
+        let y = 10;
+        let z = |x: i32,y: i32| x + y; 
+//        let z = | | x + y; 
+        let resultat = z(x,y);
+//        let resultat = z();
+        println!("{x} {y} {resultat}");
+    }
+
     if false
     {
         let store = Inventory 
